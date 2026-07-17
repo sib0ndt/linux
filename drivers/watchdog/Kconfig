@@ -1025,6 +1025,14 @@ config ASPEED_WATCHDOG
 	  To compile this driver as a module, choose M here: the
 	  module will be called aspeed_wdt.
 
+config RTK_WATCHDOG
+	tristate "Realtek watchdog support"
+	depends on ARCH_REALTEK
+	select WATCHDOG_CORE
+	help
+	  Realtek  watchdog support
+
+
 config STM32_WATCHDOG
 	tristate "STM32 Independent WatchDoG (IWDG) support"
 	depends on ARCH_STM32 || COMPILE_TEST

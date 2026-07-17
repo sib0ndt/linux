@@ -527,4 +527,5 @@ config LOONGSON2_THERMAL
 	  is higher than the high temperature threshold or lower than the low
 	  temperature threshold, the interrupt will occur.
 
+source "drivers/thermal/realtek/Kconfig"
 endif

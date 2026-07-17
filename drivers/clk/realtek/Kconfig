@@ -1,0 +1,27 @@
+config COMMON_CLK_REALTEK
+	bool "Clock driver for realtek"
+	select RTK_MMIO 
+	select RESET_CONTROLLER
+
+config COMMON_CLK_REALTEK_DEBUG
+	bool "Clock debug"
+	select RTK_REGISTER_TRACKER
+	default y
+	help
+	  Add a simple register tracker to clock
+
+config COMMON_CLK_RTD1619
+	bool "Clock driver for RTD1619"
+	select COMMON_CLK_REALTEK
+	default y
+
+config COMMON_CLK_DUMMY
+	bool "Dummy Clock"
+	help
+	  Dummy Clock, if not sure say N.
+
+config RESET_MUX
+	bool "Reset Controller Mux"
+	default y
+	help
+	  A mux to select reset controll.

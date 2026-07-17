@@ -8,4 +8,6 @@ obj-$(CONFIG_8139TOO) += 8139too.o
 r8169-y += r8169_main.o r8169_firmware.o r8169_phy_config.o
 r8169-$(CONFIG_R8169_LEDS) += r8169_leds.o
 obj-$(CONFIG_R8169) += r8169.o
+r8169soc-objs += rtl8169soc.o rtl8169soc_fw_data.o
+obj-$(CONFIG_R8169SOC) += r8169soc.o
 obj-$(CONFIG_RTASE) += rtase/

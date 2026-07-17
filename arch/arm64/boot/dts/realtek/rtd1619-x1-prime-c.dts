@@ -1,0 +1,135 @@
+// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
+/*
+ * @sib0ndt
+ */
+
+/dts-v1/;
+
+#include "rtd1619.dtsi"
+
+/ {
+	compatible = "realtek,mjolnir", "realtek,rtd1619";
+	model = "X1 PRIME C";
+
+	memory@200000 {
+		device_type = "memory";
+		reg = <0x200000 0x7fe00000>; /* ~ 2GB */
+	};
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+	};
+
+	aliases {
+		serial0 = &uart0;
+		serial1 = &uart1;
+		serial2 = &uart2;
+		ethernet0 = &nic;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		led_sys_red {
+			label = "red:sys";
+			gpios = <&rtk_iso_gpio 23 0>;
+			default-state = "off";
+		};
+
+		led_sys_green {
+			label = "green:sys";
+			gpios = <&rtk_iso_gpio 58 0>;
+			default-state = "off";
+		};
+
+		led_net_red {
+			label = "red:net";
+			gpios = <&rtk_iso_gpio 64 0>;
+			default-state = "off";
+		};
+
+		led_net_green {
+			label = "green:net";
+			gpios = <&rtk_iso_gpio 57 0>;
+			default-state = "off";
+		};
+	};
+};
+
+&reg_usb_vbus {
+	regulator-always-on;
+};
+
+&cpu0 {
+	cpu-supply = <&vdd_cpu>;
+};
+
+&cpu1 {
+	cpu-supply = <&vdd_cpu>;
+};
+
+&cpu2 {
+	cpu-supply = <&vdd_cpu>;
+};
+
+&cpu3 {
+	cpu-supply = <&vdd_cpu>;
+};
+
+&cpu4 {
+	cpu-supply = <&vdd_cpu>;
+};
+
+&cpu5 {
+	cpu-supply = <&vdd_cpu>;
+};
+
+/* debug console (J1) */
+&uart0 {
+	status = "okay";
+};
+
+/* M.2 slot (CON4) */
+&uart1 {
+	status = "disabled";
+};
+
+&uart2 {
+	status = "disabled";
+};
+
+&usb0 {
+	status = "okay";
+};
+
+&usb0_dwc3 {
+	dr_mode = "host";
+	maximum-speed = "super-speed";
+	vbus-supply = <&reg_usb_vbus>;
+};
+
+&usb1 {
+	status = "okay";
+	usb@98029000 {
+		vbus-supply = <&reg_usb_vbus>;
+	};
+};
+
+&usb2 {
+	status = "okay";
+	usb@98050000 {
+		vbus-supply = <&reg_usb_vbus>;
+	};
+};
+
+&sdio {
+	status = "okay";
+};
+
+&rng {
+	status = "okay";
+};
+
+&pwm {
+	status = "disabled";
+};

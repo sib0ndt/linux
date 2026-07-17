@@ -2554,6 +2554,12 @@ config MFD_RSMU_SPI
 	  Additional drivers must be enabled in order to use the functionality
 	  of the device.
 
+config MFD_APW8889_I2C
+	tristate "Support for Anpec-APW8889 PMIC"
+	depends on I2C
+	select MFD_CORE
+	select REGMAP_I2C
+
 config MFD_UPBOARD_FPGA
 	tristate "Support for the AAeon UP board FPGA"
 	depends on (X86 && ACPI)

@@ -1,0 +1,15 @@
+menu "Realtek Soc Drivers"
+
+config REALTEK_CHIP
+	tristate "Realtek 1xxx chip info"
+	depends on ARCH_REALTEK
+	help
+	  This driver provides realtek chip info.
+
+config RTK_FAN
+	tristate "RTK Fan driver"
+	default n
+	help
+	  Realtek Fan driver
+	  
+endmenu

@@ -12,3 +12,12 @@ config DMABUF_HEAPS_CMA
 	  Choose this option to enable dma-buf CMA heap. This heap is backed
 	  by the Contiguous Memory Allocator (CMA). If your system has these
 	  regions, you should say Y here.
+
+config DMABUF_HEAPS_REALTEK
+	tristate "DMA-BUF Realtek Heap"
+	depends on DMABUF_HEAPS && DMA_CMA
+	select DMA_OPS
+	help
+	  Choose this option to enable dma-buf Realtek heap. This heap is backed
+	  by the Contiguous Memory Allocator (CMA) & Reserved Memory for Realtek
+	  Platform.

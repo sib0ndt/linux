@@ -270,6 +270,12 @@ config RDA_INTC
 	bool
 	select IRQ_DOMAIN
 
+config REALTEK_DHC_INTC
+	tristate "Realtek DHC SoC family interrupt controller"
+	depends on ARCH_REALTEK
+	default ARCH_REALTEK
+	select IRQ_DOMAIN
+
 config RENESAS_INTC_IRQPIN
 	bool "Renesas INTC External IRQ Pin Support" if COMPILE_TEST
 	select IRQ_DOMAIN

@@ -99,6 +99,26 @@ config R8169
 	  To compile this driver as a module, choose M here: the module
 	  will be called r8169.  This is recommended.
 
+config R8169SOC
+	tristate "Realtek STB SoC 8169soc ethernet support"
+	depends on ARCH_REALTEK
+	select CRC32
+	select PHYLIB
+	help
+	  Say Y here if you have a embedded Realtek STB SoC Ethernet interface.
+
+	  To compile this driver as a module, choose M here: the module
+	  will be called r8169soc.  This is recommended.
+
+config RTL_RX_NO_COPY
+	bool "Support to receive packets without memory copy"
+	default n
+	depends on R8169SOC
+	help
+	  This is a feature of embedded Realtek Ethernet driver.
+	  Say Y here to impove performance and reduce CPU loading.
+	  Say N here to save memory for packet buffers.
+
 config R8169_LEDS
 	bool "Support for controlling the NIC LEDs"
 	depends on R8169 && LEDS_TRIGGER_NETDEV

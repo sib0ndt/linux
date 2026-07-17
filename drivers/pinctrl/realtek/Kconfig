@@ -8,6 +8,13 @@ config PINCTRL_RTD
 	select GENERIC_PINCONF
 	select REGMAP_MMIO
 
+config PINCTRL_RTD1619
+	bool "Realtek RTD1619 pin controller driver"
+	depends on ARCH_REALTEK
+	default y
+	select PINMUX
+	select GENERIC_PINCONF
+	
 config PINCTRL_RTD1619B
 	tristate "Realtek DHC 1619B pin controller driver"
 	depends on PINCTRL_RTD
