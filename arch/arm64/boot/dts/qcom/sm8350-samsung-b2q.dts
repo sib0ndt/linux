@@ -144,6 +144,11 @@
 	};
 };
 
+&adsp {
+	status = "okay";
+	firmware-name = "qcom/sm8350/b2q/adsp.mbn";
+};
+
 &apps_rsc {
 	regulators-0 {
 		compatible = "qcom,pm8350-rpmh-regulators";
@@ -287,6 +292,29 @@
 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
 		};
 	};
+};
+
+&cdsp {
+	status = "okay";
+	firmware-name = "qcom/sm8350/b2q/cdsp.mbn";
+};
+
+&gpu {
+	status = "okay";
+
+	zap-shader {
+		firmware-name = "qcom/sm8350/b2q/a660_zap.mbn";
+	};
+};
+
+&mpss {
+	status = "okay";
+	firmware-name = "qcom/sm8350/b2q/modem.mbn";
+};
+
+&slpi {
+	status = "okay";
+	firmware-name = "qcom/sm8350/b2q/slpi.mbn";
 };
 
 &i2c4 {
