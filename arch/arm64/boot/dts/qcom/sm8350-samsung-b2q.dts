@@ -410,6 +410,18 @@
 	};
 };
 
+&pcie1 {
+	status = "okay";
+	perst-gpios = <&tlmm 94 GPIO_ACTIVE_LOW>;
+	wake-gpios = <&tlmm 96 GPIO_ACTIVE_HIGH>;
+};
+
+&pcie1_phy {
+	status = "okay";
+	vdda-phy-supply = <&vreg_l5b_0p88>;
+	vdda-pll-supply = <&vreg_l6b_1p2>;
+};
+
 &pm8350_gpios {
 	vol_up_default: vol-up-default-state {
 		pins = "gpio6";
