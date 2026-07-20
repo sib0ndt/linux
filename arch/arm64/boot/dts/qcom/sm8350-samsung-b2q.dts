@@ -317,6 +317,11 @@
 	firmware-name = "qcom/sm8350/b2q/slpi.mbn";
 };
 
+&ipa {
+	status = "okay";
+	memory-region = <&pil_ipa_fw_mem>;
+};
+
 &i2c4 {
 	status = "okay";
 
