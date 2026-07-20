@@ -483,6 +483,18 @@
 	};
 };
 
+&uart2 {
+	status = "okay";
+
+	bluetooth {
+		compatible = "qcom,wcn6855-bt";
+		vddio-supply = <&vreg_l1c_1p8>;
+		vddaon-supply = <&vreg_s12b_1p2>;
+		vddbt-supply = <&vreg_l2b_3p0>;
+		max-speed = <3200000>;
+	};
+};
+
 &ufs_mem_hc {
 	status = "okay";
 	vcc-supply = <&vreg_l6c_2p9>;
