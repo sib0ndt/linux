@@ -1,0 +1,482 @@
+// SPDX-License-Identifier: BSD-3-Clause
+/*
+ * Copyright (c) 2026, Mainlining Samsung Galaxy Z Flip 3 (SM-F711B / SM8350)
+ */
+
+/dts-v1/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/leds/common.h>
+#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+
+#include "sm8350.dtsi"
+#include "pm8350.dtsi"
+#include "pm8350b.dtsi"
+#include "pm8350c.dtsi"
+#include "pmk8350.dtsi"
+
+/ {
+	model = "Samsung Galaxy Z Flip 3 5G";
+	compatible = "samsung,b2q", "qcom,sm8350";
+	chassis-type = "handset";
+
+	aliases {
+		serial0 = &uart2;
+	};
+
+	chosen {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+
+		framebuffer: framebuffer@e4000000 {
+			compatible = "simple-framebuffer";
+			reg = <0x0 0xe4000000 0x0 0x2300000>;
+			width = <1080>;
+			height = <2640>;
+			stride = <(1080 * 4)>;
+			format = "a8r8g8b8";
+		};
+	};
+
+	gpio-keys {
+		compatible = "gpio-keys";
+		pinctrl-names = "default";
+		pinctrl-0 = <&vol_up_default &flip_hall_default>;
+
+		key-volume-up {
+			label = "Volume Up";
+			linux,code = <KEY_VOLUMEUP>;
+			gpios = <&pm8350_gpios 6 GPIO_ACTIVE_LOW>;
+			debounce-interval = <15>;
+			linux,can-disable;
+			wakeup-source;
+		};
+
+		switch-lid {
+			label = "Lid Switch (Flip Hinge)";
+			linux,code = <SW_LID>;
+			linux,input-type = <EV_SW>;
+			gpios = <&tlmm 80 GPIO_ACTIVE_LOW>;
+			debounce-interval = <15>;
+		};
+	};
+
+	vph_pwr: vph-pwr-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "vph_pwr";
+		regulator-min-microvolt = <3700000>;
+		regulator-max-microvolt = <3700000>;
+		regulator-always-on;
+		regulator-boot-on;
+	};
+
+	battery: battery {
+		compatible = "simple-battery";
+		charge-full-design-microamp-hours = <3300000>;
+		voltage-min-design-microvolt = <3400000>;
+		voltage-max-design-microvolt = <4400000>;
+	};
+
+	i2c52: i2c-52 {
+		compatible = "i2c-gpio";
+		sda-gpios = <&tlmm 104 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+		scl-gpios = <&tlmm 105 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+		i2c-gpio,delay-us = <2>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		s2dos05: pmic@60 {
+			compatible = "samsung,s2dos05";
+			reg = <0x60>;
+
+			regulators {
+				s2dos05_buck1: buck1 {
+					regulator-name = "panel_vddr";
+					regulator-min-microvolt = <850000>;
+					regulator-max-microvolt = <2100000>;
+				};
+
+				s2dos05_ldo1: ldo1 {
+					regulator-name = "panel_vdd3";
+					regulator-min-microvolt = <1500000>;
+					regulator-max-microvolt = <2000000>;
+				};
+
+				s2dos05_ldo4: ldo4 {
+					regulator-name = "panel_vci";
+					regulator-min-microvolt = <2700000>;
+					regulator-max-microvolt = <3300000>;
+				};
+			};
+		};
+	};
+
+	i2c17_gpio: i2c-17 {
+		compatible = "i2c-gpio";
+		sda-gpios = <&tlmm 10 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+		scl-gpios = <&tlmm 11 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+		i2c-gpio,delay-us = <2>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		grip_sensor: proximity@28 {
+			compatible = "semtech,sx9360";
+			reg = <0x28>;
+			interrupt-parent = <&tlmm>;
+			interrupts = <12 IRQ_TYPE_LEVEL_LOW>;
+			vdd-supply = <&vreg_l1c_1p8>;
+			svdd-supply = <&vreg_l1c_1p8>;
+		};
+	};
+
+	reserved-memory {
+		ramoops: ramoops@f0b00000 {
+			compatible = "ramoops";
+			reg = <0x0 0xf0b00000 0x0 0x100000>;
+			record-size = <0x40000>;
+			console-size = <0x40000>;
+			ftrace-size = <0x40000>;
+			pmsg-size = <0x40000>;
+		};
+	};
+};
+
+&apps_rsc {
+	regulators-0 {
+		compatible = "qcom,pm8350-rpmh-regulators";
+		qcom,pmic-id = "b";
+
+		vreg_s12b_1p2: smps12 {
+			regulator-name = "vreg_s12b_1p2";
+			regulator-min-microvolt = <1200000>;
+			regulator-max-microvolt = <1224000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+
+		vreg_l1b_0p9: ldo1 {
+			regulator-name = "vreg_l1b_0p9";
+			regulator-min-microvolt = <912000>;
+			regulator-max-microvolt = <925000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+
+		vreg_l2b_3p0: ldo2 {
+			regulator-name = "vreg_l2b_3p0";
+			regulator-min-microvolt = <3072000>;
+			regulator-max-microvolt = <3072000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+
+		vreg_l3b_0p9: ldo3 {
+			regulator-name = "vreg_l3b_0p9";
+			regulator-min-microvolt = <904000>;
+			regulator-max-microvolt = <904000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+
+		vreg_l5b_0p88: ldo5 {
+			regulator-name = "vreg_l5b_0p88";
+			regulator-min-microvolt = <880000>;
+			regulator-max-microvolt = <912000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+
+		vreg_l6b_1p2: ldo6 {
+			regulator-name = "vreg_l6b_1p2";
+			regulator-min-microvolt = <1200000>;
+			regulator-max-microvolt = <1200000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+
+		vreg_l7b_2p5: ldo7 {
+			regulator-name = "vreg_l7b_2p5";
+			regulator-min-microvolt = <2504000>;
+			regulator-max-microvolt = <2504000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+
+		vreg_l9b_1p2: ldo9 {
+			regulator-name = "vreg_l9b_1p2";
+			regulator-min-microvolt = <1200000>;
+			regulator-max-microvolt = <1200000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+	};
+
+	regulators-1 {
+		compatible = "qcom,pm8350c-rpmh-regulators";
+		qcom,pmic-id = "c";
+
+		vreg_bob: bob {
+			regulator-name = "vreg_bob";
+			regulator-min-microvolt = <3000000>;
+			regulator-max-microvolt = <4000000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_AUTO>;
+		};
+
+		vreg_l1c_1p8: ldo1 {
+			regulator-name = "vreg_l1c_1p8";
+			regulator-min-microvolt = <1800000>;
+			regulator-max-microvolt = <1800000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+
+		vreg_l2c_1p8: ldo2 {
+			regulator-name = "vreg_l2c_1p8";
+			regulator-min-microvolt = <1800000>;
+			regulator-max-microvolt = <1800000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+
+		vreg_l3c_3p0: ldo3 {
+			regulator-name = "vreg_l3c_3p0";
+			regulator-min-microvolt = <3000000>;
+			regulator-max-microvolt = <3000000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+
+		vreg_l4c_1p8: ldo4 {
+			regulator-name = "vreg_l4c_1p8";
+			regulator-min-microvolt = <1800000>;
+			regulator-max-microvolt = <1800000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+
+		vreg_l5c_1p8: ldo5 {
+			regulator-name = "vreg_l5c_1p8";
+			regulator-min-microvolt = <1800000>;
+			regulator-max-microvolt = <1800000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+
+		vreg_l6c_2p9: ldo6 {
+			regulator-name = "vreg_l6c_2p9";
+			regulator-min-microvolt = <2960000>;
+			regulator-max-microvolt = <3008000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+
+		vreg_l7c_3p0: ldo7 {
+			regulator-name = "vreg_l7c_3p0";
+			regulator-min-microvolt = <3008000>;
+			regulator-max-microvolt = <3008000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+
+		vreg_l8c_1p8: ldo8 {
+			regulator-name = "vreg_l8c_1p8";
+			regulator-min-microvolt = <1800000>;
+			regulator-max-microvolt = <1800000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+
+		vreg_l9c_2p9: ldo9 {
+			regulator-name = "vreg_l9c_2p9";
+			regulator-min-microvolt = <2960000>;
+			regulator-max-microvolt = <3008000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+
+		vreg_l10c_3p3: ldo10 {
+			regulator-name = "vreg_l10c_3p3";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+	};
+};
+
+&i2c4 {
+	status = "okay";
+
+	touchscreen@49 {
+		compatible = "st,stmfts";
+		reg = <0x49>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <23 IRQ_TYPE_EDGE_FALLING>;
+		reset-gpios = <&tlmm 22 GPIO_ACTIVE_LOW>;
+		avdd-supply = <&s2dos05_ldo4>;
+		vio-supply = <&vreg_l1c_1p8>;
+		touchscreen-size-x = <1080>;
+		touchscreen-size-y = <2640>;
+	};
+};
+
+&i2c15 {
+	status = "okay";
+	clock-frequency = <1000000>;
+
+	cs35l41_l: speaker-amp@40 {
+		compatible = "cirrus,cs35l41";
+		reg = <0x40>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <26 IRQ_TYPE_LEVEL_LOW>;
+		reset-gpios = <&tlmm 93 GPIO_ACTIVE_HIGH>;
+		cirrus,boost-peak-milliamp = <4100>;
+		cirrus,boost-ind-nanohenry = <1000>;
+		cirrus,boost-cap-microfarad = <15>;
+		cirrus,asp-sdout-hiz = <3>;
+		cirrus,gpio2-src-select = <2>;
+		cirrus,gpio2-output-enable;
+		#sound-dai-cells = <1>;
+	};
+
+	cs35l41_r: speaker-amp@41 {
+		compatible = "cirrus,cs35l41";
+		reg = <0x41>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <26 IRQ_TYPE_LEVEL_LOW>;
+		reset-gpios = <&tlmm 97 GPIO_ACTIVE_HIGH>;
+		cirrus,boost-peak-milliamp = <4100>;
+		cirrus,boost-ind-nanohenry = <1000>;
+		cirrus,boost-cap-microfarad = <15>;
+		cirrus,asp-sdout-hiz = <3>;
+		cirrus,gpio2-src-select = <2>;
+		cirrus,gpio2-output-enable;
+		#sound-dai-cells = <1>;
+	};
+};
+
+&i2c17 {
+	status = "okay";
+
+	touchscreen@20 {
+		compatible = "zinitix,bt541";
+		reg = <0x20>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <34 IRQ_TYPE_EDGE_FALLING>;
+		vdd-supply = <&vreg_l1c_1p8>;
+		touchscreen-size-x = <512>;
+		touchscreen-size-y = <260>;
+	};
+};
+
+&i2c7 {
+	status = "okay";
+
+	max77705: pmic@66 {
+		compatible = "maxim,max77705";
+		reg = <0x66>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <5 IRQ_TYPE_LEVEL_LOW>;
+		#interrupt-cells = <1>;
+		interrupt-controller;
+
+		leds {
+			compatible = "maxim,max77705-rgb";
+
+			multi-led {
+				color = <LED_COLOR_ID_RGB>;
+				function = LED_FUNCTION_STATUS;
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				led@1 {
+					reg = <1>;
+					color = <LED_COLOR_ID_RED>;
+				};
+
+				led@2 {
+					reg = <2>;
+					color = <LED_COLOR_ID_GREEN>;
+				};
+
+				led@3 {
+					reg = <3>;
+					color = <LED_COLOR_ID_BLUE>;
+				};
+			};
+		};
+	};
+
+	max77705_charger: charger@69 {
+		compatible = "maxim,max77705-charger";
+		reg = <0x69>;
+		monitored-battery = <&battery>;
+		interrupt-parent = <&max77705>;
+		interrupts = <0>;
+	};
+
+	fuel-gauge@36 {
+		compatible = "maxim,max77705-battery";
+		reg = <0x36>;
+		power-supplies = <&max77705_charger>;
+		maxim,rsns-microohm = <5000>;
+		interrupt-parent = <&max77705>;
+		interrupts = <2>;
+	};
+};
+
+&pm8350_gpios {
+	vol_up_default: vol-up-default-state {
+		pins = "gpio6";
+		function = "normal";
+		bias-pull-up;
+		input-enable;
+		power-source = <1>;
+	};
+};
+
+&qupv3_id_0 {
+	status = "okay";
+};
+
+&qupv3_id_1 {
+	status = "okay";
+};
+
+&qupv3_id_2 {
+	status = "okay";
+};
+
+&tlmm {
+	gpio-reserved-ranges = <32 2>, <48 4>;
+
+	flip_hall_default: flip-hall-default-state {
+		pins = "gpio80";
+		function = "gpio";
+		bias-disable;
+		input-enable;
+	};
+};
+
+&ufs_mem_hc {
+	status = "okay";
+	vcc-supply = <&vreg_l6c_2p9>;
+	vcc-max-microamp = <800000>;
+	vccq-supply = <&vreg_l6b_1p2>;
+	vccq-max-microamp = <800000>;
+	vccq2-supply = <&vreg_s12b_1p2>;
+	vccq2-max-microamp = <800000>;
+};
+
+&ufs_mem_phy {
+	status = "okay";
+	vdda-phy-supply = <&vreg_l5b_0p88>;
+	vdda-pll-supply = <&vreg_l6b_1p2>;
+};
+
+&usb_1 {
+	status = "okay";
+};
+
+&usb_1_dwc3 {
+	dr_mode = "otg";
+	usb-role-switch-disable;
+};
+
+&usb_1_hsphy {
+	status = "okay";
+	vdd-supply = <&vreg_l1b_0p9>;
+	vdda12-supply = <&vreg_l6b_1p2>;
+	vdda33-supply = <&vreg_l2b_3p0>;
+};
+
+&usb_1_qmpphy {
+	status = "okay";
+	vdda-phy-supply = <&vreg_l6b_1p2>;
+	vdda-pll-supply = <&vreg_l1b_0p9>;
+};
